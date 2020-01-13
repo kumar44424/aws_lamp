@@ -105,13 +105,13 @@ resource "aws_vpc" "cam_aws" {
 }
 
 resource "aws_internet_gateway" "cam_inter" {
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.cam_aws.id}"
 
   tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-gateway"))}"
 }
 
 resource "aws_subnet" "primary" {
-  vpc_id            = "${aws_vpc.default.id}"
+  vpc_id            = "${aws_vpc.cam_aws.id}"
   cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.aws_region}b"
 
@@ -119,11 +119,11 @@ resource "aws_subnet" "primary" {
 }
 
 resource "aws_route_table" "cam_aws" {
-  vpc_id = "${aws_vpc.default.id}"
+  vpc_id = "${aws_vpc.cam_aws.id}"
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.default.id}"
+    gateway_id = "${aws_internet_gateway.cam_inter.id}"
   }
 
   tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-route-table"))}"
@@ -132,7 +132,7 @@ resource "aws_route_table" "cam_aws" {
 resource "aws_security_group" "application" {
   name        = "${var.network_name_prefix}-security-group-application"
   description = "Security group which applies to lamp application server"
-  vpc_id      = "${aws_vpc.default.id}"
+  vpc_id      = "${aws_vpc.cam_aws.id}"
 
   ingress {
     from_port   = 22
