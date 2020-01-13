@@ -208,10 +208,4 @@ resource "aws_instance" "ubntu_aws" {
 #########################################################
 # Output
 #########################################################
-output "aws_php_address" {
-  value = "http://${aws_instance.php_server.public_ip}/test.php"
-}
 
-output "mysql_address" {
-  value = "${aws_db_instance.mysql.address}"
-}
