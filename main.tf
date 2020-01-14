@@ -38,59 +38,13 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-#Variable : AWS image name
-variable "aws_image" {
-  type = "string"
-  description = "Operating system image id / template that should be used when creating the virtual image"
-  default = "ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"
-}
-
-variable "aws_ami_owner_id" {
-  description = "AWS AMI Owner ID"
-  default = "099720109477"
-}
-
-# Lookup for AMI based on image name and owner ID
-data "aws_ami" "aws_ami" {
-  most_recent = true
-  filter {
-    name = "name"
-    values = ["${var.aws_image}*"]
-  }
-  owners = ["${var.aws_ami_owner_id}"]
-}
-
-variable "php_instance_name" {
-  description = "The hostname of server with php"
-  default     = "lampPhp"
-}
-
-variable "db_instance_name" {
-  description = "The hostname of server with mysql"
-  default     = "lampDb"
-}
-
-variable "network_name_prefix" {
-  description = "The prefix of names for VPC, Gateway, Subnet and Security Group"
-  default     = "opencontent-lamp"
-}
-
 variable "public_key_name" {
   description = "Name of the public SSH key used to connect to the servers"
-  default     = "cam-public-key-lamp"
+  default     = "cam-public-key"
 }
 
 variable "public_key" {
   description = "Public SSH key used to connect to the servers"
-}
-
-variable "cam_user" {
-  description = "User to be added into db and sshed into servers"
-  default     = "camuser"
-}
-
-variable "cam_pwd" {
-  description = "Password for cam user (minimal length is 8)"
 }
 
 
@@ -101,21 +55,21 @@ resource "aws_vpc" "cam_aws" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-vpc"))}"
+  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-vpc"))}"
 }
 
 resource "aws_internet_gateway" "cam_inter" {
   vpc_id = "${aws_vpc.cam_aws.id}"
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-gateway"))}"
+  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-internet-gateway"))}"
 }
 
-resource "aws_subnet" "primary" {
+resource "aws_subnet" "cam-primary" {
   vpc_id            = "${aws_vpc.cam_aws.id}"
   cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.aws_region}b"
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-subnet"))}"
+  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-subnet"))}"
 }
 
 resource "aws_route_table" "cam_aws" {
@@ -126,11 +80,11 @@ resource "aws_route_table" "cam_aws" {
     gateway_id = "${aws_internet_gateway.cam_inter.id}"
   }
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-route-table"))}"
+  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-route-table"))}"
 }
 
-resource "aws_security_group" "application" {
-  name        = "${var.network_name_prefix}-security-group-application"
+resource "aws_security_group" "cam-sg" {
+  name        = "cam-security-group-application"
   description = "Security group which applies to lamp application server"
   vpc_id      = "${aws_vpc.cam_aws.id}"
 
@@ -154,7 +108,7 @@ resource "aws_security_group" "application" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "${var.network_name_prefix}-security-group-application"))}"
+  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-security-group-application"))}"
 }
 
 
@@ -184,12 +138,12 @@ resource "aws_key_pair" "temp_public_key" {
 resource "aws_instance" "ubntu_aws" {
   instance_type               = "t2.medium"
   ami                         = "ami-018fe598068de4442"
-  subnet_id                   = "${aws_subnet.primary.id}"
-  vpc_security_group_ids      = ["${aws_security_group.application.id}"]
+  subnet_id                   = "${aws_subnet.cam-primary.id}"
+  vpc_security_group_ids      = ["${aws_security_group.cam-sg.id}"]
   key_name                    = "${aws_key_pair.temp_public_key.id}"
   associate_public_ip_address = true
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "${var.php_instance_name}"))}"
+  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-aws"))}"
 
   # Specify the ssh connection
  connection {
