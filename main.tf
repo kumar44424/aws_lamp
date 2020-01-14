@@ -51,21 +51,21 @@ variable "public_key" {
 #########################################################
 # Build network
 #########################################################
-resource "aws_vpc" "cam_aws" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_hostnames = true
+#resource "aws_vpc" "cam_aws" {
+#  cidr_block           = "10.0.0.0/16"
+#  enable_dns_hostnames = true
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-vpc"))}"
-}
+#  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-vpc"))}"
+#}
 
 resource "aws_internet_gateway" "cam_inter" {
-  vpc_id = "${aws_vpc.cam_aws.id}"
+  vpc_id = "vpc-0ef19bf9446b5b3f5"
 
   tags = "${merge(module.camtags.tagsmap, map("Name", "cam-internet-gateway"))}"
 }
 
 resource "aws_subnet" "cam-primary" {
-  vpc_id            = "${aws_vpc.cam_aws.id}"
+  vpc_id            = "vpc-0ef19bf9446b5b3f5"
   cidr_block        = "10.0.1.0/24"
   availability_zone = "${var.aws_region}b"
 
@@ -73,7 +73,7 @@ resource "aws_subnet" "cam-primary" {
 }
 
 resource "aws_route_table" "cam_aws" {
-  vpc_id = "${aws_vpc.cam_aws.id}"
+  vpc_id = "vpc-0ef19bf9446b5b3f5"
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -86,7 +86,7 @@ resource "aws_route_table" "cam_aws" {
 resource "aws_security_group" "cam-sg" {
   name        = "cam-security-group-application"
   description = "Security group which applies to lamp application server"
-  vpc_id      = "${aws_vpc.cam_aws.id}"
+  vpc_id      = "vpc-0ef19bf9446b5b3f5"
 
   ingress {
     from_port   = 22
