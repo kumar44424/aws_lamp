@@ -162,9 +162,6 @@
       "immutable": false,
       "group_name": "cloud"
     },
-    
-    
-    
     {
         "default": "cam-public",
         "description": "Name of the public SSH key used to connect to the virtual guests; Allow 1 to 65 printable ASCII characters",
@@ -189,7 +186,7 @@
         "type": "string",
         "regex": "^ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3}( [^@]+@[^@]+| [^@]+){0,1}$",
         "group_name": "ssh_keys"
-    },
+    }
        
   ]
 }
