@@ -115,7 +115,7 @@ resource "aws_security_group" "cam-sg" {
 ##############################################################
 # Create user-specified public key in AWS
 ##############################################################
-resource "aws_key_pair" "cam_public_key" {
+resource "aws_key_pair" "cam_public_key1" {
   key_name   = "${var.public_key_name}"
   public_key = "${var.public_key}"
 }
@@ -127,8 +127,8 @@ resource "tls_private_key" "ssh" {
   algorithm = "RSA"
 }
 
-resource "aws_key_pair" "temp_public_key" {
-  key_name   = "${var.public_key_name}-temp"
+resource "aws_key_pair" "temp_public_key1" {
+  key_name   = "${var.public_key_name1}-temp"
   public_key = "${tls_private_key.ssh.public_key_openssh}"
 }
 
