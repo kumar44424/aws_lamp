@@ -140,7 +140,7 @@ resource "aws_instance" "ubntu_aws" {
   ami                         = "ami-018fe598068de4442"
   subnet_id                   = "${aws_subnet.cam-primary.id}"
   vpc_security_group_ids      = ["${aws_security_group.cam-sg.id}"]
-  key_name                    = "${aws_key_pair.temp_public_key.id}"
+  key_name                    = "${aws_key_pair.temp_public_key1.id}"
   associate_public_ip_address = true
 
   tags = "${merge(module.camtags.tagsmap, map("Name", "cam-aws"))}"
