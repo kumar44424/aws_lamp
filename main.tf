@@ -58,11 +58,11 @@ variable "public_key" {
 #  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-vpc"))}"
 #}
 
-resource "aws_internet_gateway" "cam_inter" {
-  vpc_id = "vpc-0ef19bf9446b5b3f5"
+#resource "aws_internet_gateway" "cam_inter" {
+#  vpc_id = "vpc-0ef19bf9446b5b3f5"
 
-  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-internet-gateway"))}"
-}
+#  tags = "${merge(module.camtags.tagsmap, map("Name", "cam-internet-gateway"))}"
+#}
 
 resource "aws_subnet" "cam-primary" {
   vpc_id            = "vpc-0ef19bf9446b5b3f5"
@@ -77,7 +77,7 @@ resource "aws_route_table" "cam_aws" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.cam_inter.id}"
+    gateway_id = "igw-00e938c334abc249e"
   }
 
   tags = "${merge(module.camtags.tagsmap, map("Name", "cam-route-table"))}"
