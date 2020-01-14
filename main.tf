@@ -183,7 +183,7 @@ resource "aws_key_pair" "temp_public_key" {
 ##############################################################
 resource "aws_instance" "ubntu_aws" {
   instance_type               = "t2.micro"
-  ami                         = "ami-018fe598068de4442"
+  ami                         = "${data.aws_ami.aws_ami.id}"
   subnet_id                   = "${aws_subnet.primary.id}"
   vpc_security_group_ids      = ["${aws_security_group.application.id}"]
   key_name                    = "${aws_key_pair.temp_public_key.id}"
