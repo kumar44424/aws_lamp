@@ -15,7 +15,7 @@
     {
       "name": "ssh_keys",
       "label": "SSH Keys"
-    },
+    }
     
   ],
   "output_groups": [
